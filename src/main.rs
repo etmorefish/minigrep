@@ -8,16 +8,16 @@ fn main() {
     // let filename = &args[2];
     // let (query, filename) = parse_config(&args);
     // let config = parse_config(&args);
-    let config = Config::new(&args).unwrap_or_else(|_err| {
-        // println!("Problem parsing arguments: {}", err);
+    let config = Config::new(&args).unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
 
     // println!("Searching for {}", config.query);
     // println!("In file {}", config.filename);
 
-    if let Err(_e) = minigrep::run(config){
-        // println!("Application error: {}", e);
+    if let Err(e) = minigrep::run(config){
+        eprintln!("Application error: {}", e);
         process::exit(1);
     }
 }
