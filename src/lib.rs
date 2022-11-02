@@ -1,7 +1,6 @@
-use std::{error::Error, fs, env};
+use std::{env, error::Error, fs};
 
-
-pub struct Config{
+pub struct Config {
     pub query: String,
     pub filename: String,
     pub case_sensitive: bool,
@@ -15,7 +14,7 @@ pub struct Config{
 
 impl Config {
     pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3{
+        if args.len() < 3 {
             // panic!("not enough arguments")
             return Err("not enough arguments");
         }
@@ -23,33 +22,35 @@ impl Config {
         let filename = args[2].clone();
 
         let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
-        Ok(Config{query, filename, case_sensitive})
-
+        Ok(Config {
+            query,
+            filename,
+            case_sensitive,
+        })
     }
 }
 
-
-pub fn run(config: Config) -> Result<(), Box<dyn Error>>{
+pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.filename)?;
-        // .expect("Something went wrong reading the file");
+    // .expect("Something went wrong reading the file");
     // println!("\nwith text:\n{}", contents);
-    
-    let results = if config.case_sensitive{
+
+    let results = if config.case_sensitive {
         search(&config.query, &contents)
-    } else{
+    } else {
         search_case_insensitive(&config.query, &contents)
     };
-    
+
     // for line in search(&config.query, &contents) {
     //     println!("{}", line);
     // }
-    for line in results{
+    for line in results {
         println!("{}", line);
     }
     Ok(())
 }
 
-pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str>{
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let mut results = Vec::new();
 
     // 使用 lines 方法遍历每一行
@@ -59,13 +60,12 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str>{
             // 存储匹配的行
             results.push(line);
         }
-
     }
 
     results
 }
 
-pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str>{
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let query = query.to_lowercase();
     let mut results = Vec::new();
 
@@ -79,7 +79,7 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a st
 }
 
 #[cfg(test)]
-mod tests{
+mod tests {
     use super::*;
 
     #[test]
@@ -105,5 +105,12 @@ Trust me.";
             vec!["Rust:", "Trust me."],
             search_case_insensitive(query, contents)
         );
+    }
+
+    fn iterator_sum() {
+        let v1 = vec![1, 2, 3, 4];
+        let v1_iter = v1.iter();
+        let total: i32 = v1_iter.sum();
+        assert_eq!(total, 10);
     }
 }
